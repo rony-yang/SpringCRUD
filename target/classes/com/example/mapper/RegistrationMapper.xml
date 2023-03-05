@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+  <mapper namespace="com.example.mapper.RegistrationMapper">
+
+	<!-- 수강신청 -->
+	<insert id="Course_regist">
+	
+		insert into registration(userId, studyCode, studyAllow)
+		values(#{userId, jdbcType=VARCHAR}, 
+			   #{studyCode, jdbcType=VARCHAR}, 
+			   '2')
+<!-- 		처음넣을때는 무조건 보류(2)로 넣고 이후 관리자가 확인하여 거절(0)이나 허가(1)하도록 설정  -->
+<!-- 		values(#{userId}, #{studyCode}, #{studyAllow})  -->
+	
+	</insert>
+	
+	
+	<!-- 수강취소 -->
+	<delete id="Course_delete">
+	
+		delete from registration where (userId = #{userId} and studyCode = #{studyCode})
+	
+	</delete>
+	
+	
+	<!-- 수강신청 목록 -->
+	<select id="Course_list" resultType="com.example.domain.RegistrationConfirmDTO">
+	
+		select a.userId, a.studyCode, b.studyCourse, b.studyStartDate, b.studyPrice
+		from registration a join study b 
+		on a.studyCode = b.studyCode
+		where a.userId = #{userId}
+		order by a.userId asc, studyCode asc
+		
+	</select>
+	
+	<!-- 카트 수정 -->
+	<update id="Course_fix">
+	
+		update registration set studyAllow = #{studyAllow} 
+		where (userId = #{userId} and studyCode = #{studyCode})
+	
+	</update>
+	
+  </mapper>
